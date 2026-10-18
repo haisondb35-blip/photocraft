@@ -4192,3 +4192,5 @@ navigator	Zoom	Zoom
 	Increase Brush Size	Aumentar tamaño del pincel
 	Decrease Brush Hardness	Reducir dureza del pincel
 	Increase Brush Hardness	Aumentar dureza del pincel
+# Window > Claude: the assistant pane (a product name, the same in every language).
+	Claude	Claude

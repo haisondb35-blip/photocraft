@@ -3203,3 +3203,5 @@ curves	Smooth	Сгладить
 	Increase Brush Size	Увеличить размер кисти
 	Decrease Brush Hardness	Уменьшить жёсткость кисти
 	Increase Brush Hardness	Увеличить жёсткость кисти
+# Window > Claude: the assistant pane (a product name, the same in every language).
+	Claude	Claude

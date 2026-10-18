@@ -4303,3 +4303,5 @@ shape	Appearance	Izgled
 	Increase Brush Size	Povećaj veličinu četkice
 	Decrease Brush Hardness	Smanji tvrdoću četkice
 	Increase Brush Hardness	Povećaj tvrdoću četkice
+# Window > Claude: the assistant pane (a product name, the same in every language).
+	Claude	Claude

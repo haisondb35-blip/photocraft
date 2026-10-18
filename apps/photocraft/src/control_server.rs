@@ -17,14 +17,24 @@ use photocraft_ui_egui::control::REPLY_DEADLINE;
 use serde_json::{Value, json};
 
 pub fn start(port: u16, token: String, ctx: egui::Context) -> Receiver<ControlRequest> {
+    match start_with(port, token, ctx) {
+        Some((_, rx)) => rx,
+        None => channel::<ControlRequest>().1,
+    }
+}
+
+/// [`start`] on `port` (0: a free port the system picks), returning the port it listens on: the
+/// Claude pane's own channel, with a token made for it.
+pub fn start_with(port: u16, token: String, ctx: egui::Context) -> Option<(u16, Receiver<ControlRequest>)> {
     let (tx, rx) = channel::<ControlRequest>();
     let listener = match TcpListener::bind(("127.0.0.1", port)) {
         Ok(l) => l,
         Err(e) => {
             eprintln!("photocraft: control server failed to bind 127.0.0.1:{port}: {e}");
-            return rx;
+            return None;
         }
     };
+    let port = listener.local_addr().map(|a| a.port()).unwrap_or(port);
     eprintln!("photocraft: control server listening on 127.0.0.1:{port}");
     std::thread::spawn(move || {
         let limiter = ConnectionLimiter::new(MAX_CONNECTIONS);
@@ -44,7 +54,7 @@ pub fn start(port: u16, token: String, ctx: egui::Context) -> Receiver<ControlRe
             });
         }
     });
-    rx
+    Some((port, rx))
 }
 
 fn serve(stream: TcpStream, token: &str, tx: Sender<ControlRequest>, ctx: egui::Context) {

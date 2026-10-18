@@ -663,6 +663,13 @@ fn main() -> eframe::Result {
                 let rx = control_server::start(port, token, cc.egui_ctx.clone());
                 app = app.with_control(rx);
             }
+            // Window > Claude: the pane opens a channel of its own when first asked, on a free port
+            // with a token made for it, and hands both to the assistant it starts.
+            app.assistant.starter = Some(Box::new(|ctx| {
+                let token = photocraft_automation::security::generate_token().ok()?;
+                let (port, rx) = control_server::start_with(0, token.clone(), ctx.clone())?;
+                Some((port, token, rx))
+            }));
             #[cfg(target_os = "macos")]
             {
                 app.services.os_events = Some(apple_events.connect(&cc.egui_ctx));

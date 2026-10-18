@@ -578,6 +578,10 @@ pub(crate) fn invoke_unguarded(app: &mut PhotocraftApp, ctx: &egui::Context, id:
         a if crate::adjust_dialog::has_dialog(a) && params.as_object().is_none_or(|o| o.is_empty()) => {
             Ok(json!({"dialog": crate::adjust_dialog::open(app, a).ok_or("no document")?}))
         }
+        "window.claude" => {
+            app.assistant_open = !app.assistant_open;
+            Ok(Value::Null)
+        }
         "window.togglePanels" => {
             // Tab hides the Tools panel, the options bar and the dock; Tab again shows what it hid.
             let p = &mut app.ui.panels;
@@ -709,6 +713,7 @@ pub fn is_enabled(app: &PhotocraftApp, id: &str) -> bool {
         }
         i if i.starts_with("window.toggle.") => true,
         "window.togglePanels" => true,
+        "window.claude" => true,
         // With one document open the key stays quiet, as in Photoshop, rather than reporting why.
         "window.nextDocument" | "window.previousDocument" => app.session.active().is_some(),
         i if panel_alias(i).is_some() || workspace_name(i).is_some() => true,
@@ -833,6 +838,7 @@ fn checked(app: &PhotocraftApp, id: &str) -> Option<bool> {
         "window.toggle.toolbar" => p.toolbar,
         "window.toggle.dock" => p.dock,
         "window.togglePanels" => p.toolbar || p.options_bar || p.dock,
+        "window.claude" => app.assistant_open,
         "window.toggle.options" => p.options_bar,
         "window.toggle.brushSettings" => p.brush_settings,
         "window.toggle.brushes" => p.brushes,

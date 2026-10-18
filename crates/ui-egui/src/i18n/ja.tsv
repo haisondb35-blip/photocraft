@@ -3907,3 +3907,5 @@ curves	Smooth	スムーズ
 	Increase Brush Size	ブラシサイズを大きく
 	Decrease Brush Hardness	ブラシの硬さを下げる
 	Increase Brush Hardness	ブラシの硬さを上げる
+# Window > Claude: the assistant pane (a product name, the same in every language).
+	Claude	Claude

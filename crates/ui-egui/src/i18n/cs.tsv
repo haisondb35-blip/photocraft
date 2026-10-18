@@ -3838,3 +3838,5 @@ navigator	Zoom	Zvětšení
 	Increase Brush Size	Zvětšit velikost štětce
 	Decrease Brush Hardness	Snížit tvrdost štětce
 	Increase Brush Hardness	Zvýšit tvrdost štětce
+# Window > Claude: the assistant pane (a product name, the same in every language).
+	Claude	Claude

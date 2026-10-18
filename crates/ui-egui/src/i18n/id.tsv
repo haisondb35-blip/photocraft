@@ -3225,3 +3225,5 @@ curves	Smooth	Haluskan
 	Increase Brush Size	Perbesar ukuran kuas
 	Decrease Brush Hardness	Kurangi kekerasan kuas
 	Increase Brush Hardness	Tambah kekerasan kuas
+# Window > Claude: the assistant pane (a product name, the same in every language).
+	Claude	Claude

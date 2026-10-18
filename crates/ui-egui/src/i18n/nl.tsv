@@ -3990,3 +3990,5 @@ curves	Smooth	Vloeiend maken
 	Increase Brush Size	Penseelgrootte vergroten
 	Decrease Brush Hardness	Penseelhardheid verlagen
 	Increase Brush Hardness	Penseelhardheid verhogen
+# Window > Claude: the assistant pane (a product name, the same in every language).
+	Claude	Claude

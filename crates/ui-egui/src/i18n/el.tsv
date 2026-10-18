@@ -3930,3 +3930,5 @@ curves	Smooth	Εξομάλυνση
 	Increase Brush Size	Αύξηση μεγέθους πινέλου
 	Decrease Brush Hardness	Μείωση σκληρότητας πινέλου
 	Increase Brush Hardness	Αύξηση σκληρότητας πινέλου
+# Window > Claude: the assistant pane (a product name, the same in every language).
+	Claude	Claude

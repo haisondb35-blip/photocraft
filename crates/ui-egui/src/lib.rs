@@ -15,6 +15,7 @@ macro_rules! tl {
 }
 
 pub mod actions;
+pub mod assistant;
 pub mod adjust_dialog;
 pub mod adjust_editors;
 pub mod adjust_preview;
@@ -642,6 +643,10 @@ pub struct PhotocraftApp {
     /// The first digit of a two-digit opacity typed on the number keys (`opacity_keys`, #352).
     pub(crate) opacity_keys: opacity_keys::Pending,
     control_rx: Option<Receiver<ControlRequest>>,
+    /// Window > Claude: the assistant pane is shown.
+    pub assistant_open: bool,
+    /// The assistant pane: the conversation, the assistant it runs and its control channel.
+    pub assistant: assistant::Assistant,
     pending_screenshots: Vec<(u64, Option<String>, Sender<ControlResponse>)>,
     /// Screenshots not yet requested from the viewport: (token, earliest time in ms, frames seen).
     queued_screenshots: Vec<(u64, f64, u32)>,
@@ -887,6 +892,8 @@ impl PhotocraftApp {
             caps_lock: false,
             opacity_keys: None,
             control_rx: None,
+            assistant_open: false,
+            assistant: assistant::Assistant::default(),
             pending_screenshots: Vec::new(),
             queued_screenshots: Vec::new(),
             input_waiters: Vec::new(),
@@ -1777,7 +1784,18 @@ impl PhotocraftApp {
     }
 
     fn drain_control(&mut self, ctx: &egui::Context) {
-        let Some(rx) = self.control_rx.take() else { return };
+        if let Some(rx) = self.control_rx.take() {
+            self.drain_from(ctx, &rx);
+            self.control_rx = Some(rx);
+        }
+        // The assistant pane's own channel: requests from the assistant it started.
+        if let Some(rx) = self.assistant.control_rx.take() {
+            self.drain_from(ctx, &rx);
+            self.assistant.control_rx = Some(rx);
+        }
+    }
+
+    fn drain_from(&mut self, ctx: &egui::Context, rx: &Receiver<ControlRequest>) {
         while let Ok(req) = rx.try_recv() {
             let reply = req.reply.clone();
             if req.deadline.is_some_and(|deadline| std::time::Instant::now() >= deadline) || !req.dispatch.start() {
@@ -1800,7 +1818,6 @@ impl PhotocraftApp {
             // `ui.set` may have changed the edit target: the next request sees its colours.
             self.sync_mask_targets();
         }
-        self.control_rx = Some(rx);
     }
 
     fn issue_screenshots(&mut self, ctx: &egui::Context) {
@@ -2046,6 +2063,9 @@ impl eframe::App for PhotocraftApp {
         }
         if chrome && self.ui.panels.dock {
             panels::right_dock(self, ui);
+        }
+        if self.assistant_open {
+            assistant::side_pane(self, ui);
         }
         let t = theme::Tokens::get(&ctx);
         let backdrop = if chrome { prefs_ui::pasteboard_color(self).unwrap_or(t.canvas) } else { egui::Color32::BLACK };
