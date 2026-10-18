@@ -652,11 +652,13 @@ pub fn title_bar(app: &mut PhotocraftApp, ui: &mut egui::Ui) {
                         ("Pixel Art".to_string(), tl!("Pixel Art")),
                         ("Motion".to_string(), tl!("Motion")),
                     ];
-                    // A narrow bar drops what is also in a menu, the theme toggle first
-                    // (Preferences), then search (Edit › Search), and narrows the switcher
-                    // (Window › Workspace) before anything runs over.
+                    // A narrow bar drops what is also in a menu, Claude first (Window › Claude), the
+                    // theme toggle next (Preferences), then search (Edit › Search), and narrows the
+                    // switcher (Window › Workspace) before anything runs over.
                     let room = ui.available_width();
-                    let icons_shown: u8 = if room >= WORKSPACE_MIN + 2.0 * ICON_SLOT {
+                    let icons_shown: u8 = if room >= WORKSPACE_MIN + 3.0 * ICON_SLOT {
+                        3
+                    } else if room >= WORKSPACE_MIN + 2.0 * ICON_SLOT {
                         2
                     } else if room >= WORKSPACE_MIN + ICON_SLOT {
                         1
@@ -685,6 +687,10 @@ pub fn title_bar(app: &mut PhotocraftApp, ui: &mut egui::Ui) {
                             crate::prefs_ui::cycle_appearance(app, ui.ctx());
                         }
                         button.context_menu(|ui| crate::prefs_ui::appearance_context_menu(app, ui));
+                    }
+                    // Claude: the assistant pane (Window › Claude).
+                    if icons_shown >= 3 && icons::button(ui, "wand-sparkles", 28.0, app.assistant_open, "Claude (Window › Claude)").clicked() {
+                        app.assistant_open = !app.assistant_open;
                     }
                     if rtl { ui.min_rect().right() } else { ui.min_rect().left() }
                 };
