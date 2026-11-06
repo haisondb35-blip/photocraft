@@ -25,6 +25,8 @@ impl PhotocraftApp {
             self.drain_from(ctx, &rx);
             self.control_rx = Some(rx);
         }
+        // Open from the start and listed for the other Craft apps (once).
+        self.assistant.share(ctx);
         // The assistant pane's own channel: requests from the assistant it started.
         if let Some(rx) = self.assistant.control_rx.take() {
             self.drain_from(ctx, &rx);
