@@ -625,6 +625,9 @@ fn main() -> eframe::Result {
                 let rx = control_server::start(listener, token, cc.egui_ctx.clone());
                 app = app.with_control(rx);
             }
+            // Each file's conversation with the assistant is remembered, in the folder all the Craft
+            // apps share (ArtCraft/AI).
+            app.assistant.use_memory(photocraft_ui_egui::assistant::Store::shared());
             // Window > Claude: the pane opens a channel of its own when first asked, on a free port
             // with a token made for it, and hands both to the assistant it starts.
             app.assistant.starter = Some(Box::new(|ctx| {

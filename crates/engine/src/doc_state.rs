@@ -3,6 +3,8 @@ use super::{Arc, Document, History, LayerId, LayerTarget, channel_cmds, float_cm
 /// Per-document editing state.
 #[derive(Clone, Debug)]
 pub struct DocState {
+    /// Tells open documents apart while the app runs (not saved; a new one per document).
+    pub uid: u64,
     pub doc: Arc<Document>,
     pub history: History,
     /// The primary ("key") layer: what single-layer commands act on. Always a member of
@@ -62,6 +64,12 @@ pub struct DocState {
     pub(crate) typed_names: std::collections::HashMap<LayerId, String>,
 }
 
+/// A number no other document of this run has.
+fn next_uid() -> u64 {
+    static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+    NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+}
+
 impl DocState {
     /// Trim the history to its budget, counting the tiles only History panel snapshots hold
     /// against it too (#4530). Returns how many states were dropped.
@@ -92,6 +100,7 @@ impl DocState {
         // panel's top row can always bring it back (#2966).
         let first = history_cmds::Snapshot { id: 0, name: doc.name.clone(), doc: doc.clone(), layers: target };
         Self {
+            uid: next_uid(),
             doc,
             history,
             active_layer,

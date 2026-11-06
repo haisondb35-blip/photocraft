@@ -127,7 +127,9 @@ pub fn title_bar(app: &mut PhotocraftApp, ui: &mut egui::Ui) {
                         button.context_menu(|ui| crate::prefs_ui::appearance_context_menu(app, ui));
                     }
                     // Claude: the assistant pane (Window › Claude).
-                    if icons_shown >= 3 && icons::button(ui, "wand-sparkles", 28.0, app.assistant_open, "AI Assistant: Claude or ChatGPT (Window › Claude)").clicked() {
+                    if icons_shown >= 3
+                        && icons::button(ui, "wand-sparkles", 28.0, app.assistant_open, "AI Assistant: Claude or ChatGPT (Window › Claude)").clicked()
+                    {
                         app.assistant_open = !app.assistant_open;
                     }
                     if rtl { ui.min_rect().right() } else { ui.min_rect().left() }
