@@ -367,9 +367,7 @@ impl Store {
         files.sort();
         for f in files {
             let Some(v) = std::fs::read(&f).ok().and_then(|b| serde_json::from_slice::<Value>(&b).ok()) else { continue };
-            let (Some(name), Some(port), Some(server)) =
-                (v.get("name").and_then(Value::as_str), v.get("port").and_then(Value::as_u64), v.get("server"))
-            else {
+            let (Some(name), Some(port), Some(server)) = (v.get("name").and_then(Value::as_str), v.get("port").and_then(Value::as_u64), v.get("server")) else {
                 continue;
             };
             let Ok(port) = u16::try_from(port) else { continue };
@@ -411,7 +409,11 @@ pub fn allow_peers(args: &mut [String], config: &Path) {
         return;
     }
     if let Some(a) = args.iter_mut().find(|a| a.starts_with("mcp__")) {
-        *a = names.iter().map(|(n, _)| format!("mcp__{n}")).collect::<Vec<_>>().join(",");
+        // This app's own tools first, then the others'.
+        let own = a.clone();
+        let mut all = vec![own.clone()];
+        all.extend(names.iter().map(|(n, _)| format!("mcp__{n}")).filter(|n| *n != own));
+        *a = all.join(",");
     }
 }
 
@@ -440,8 +442,10 @@ pub fn codex_peer_args(config: &Path, own: &str) -> Vec<String> {
     a
 }
 
-/// Added to the assistant's instructions: the other Craft apps may be there too.
-pub const PEERS_NOTE: &str = " Other Craft apps open on this computer (GridCraft, WordCraft, DeckCraft, PdfCraft, PhotoCraft, VectorCraft, FilmCraft, CadCraft) may be connected too, as tools named after the app: \
+/// Added to the assistant's instructions: the other Craft apps may be there too (each app's
+/// `SYSTEM_PROMPT` carries a copy of this text).
+#[allow(dead_code)]
+pub const PEERS_NOTE: &str = " Other Craft apps open on this computer (GridCraft, WordCraft, DeckCraft, PdfCraft, PhotoCraft, VectorCraft, FilmCraft, CadCraft, FigCraft, LightCraft, EffectCraft) may be connected too, as tools named after the app: \
 use them when the user asks for another app's data (for example, read the drawing open in CadCraft to build from it), and don't change another app's document unless asked.";
 
 #[cfg(test)]
@@ -502,8 +506,7 @@ mod tests {
         };
         let server = |app: &str| json!({"type": "stdio", "command": format!("C:/ArtCraft/{app}-cli.exe"), "args": ["mcp", "--connect", "127.0.0.1:1"], "env": {"TOKEN": "t\"1"}});
         store.register("cadcraft", live_port, &server("cadcraft"));
-        std::fs::write(d.join("apps/wordcraft-1.json"), json!({"name": "wordcraft", "port": dead_port, "server": server("wordcraft")}).to_string())
-            .unwrap();
+        std::fs::write(d.join("apps/wordcraft-1.json"), json!({"name": "wordcraft", "port": dead_port, "server": server("wordcraft")}).to_string()).unwrap();
         std::fs::write(d.join("apps/bad-2.json"), json!({"name": "a b", "port": live_port, "server": {}}).to_string()).unwrap();
         let peers = store.peers("gridcraft");
         assert_eq!(peers.iter().map(|(n, _)| n.as_str()).collect::<Vec<_>>(), ["cadcraft"]);
@@ -516,10 +519,7 @@ mod tests {
         allow_peers(&mut args, &config);
         assert_eq!(args[2], "mcp__gridcraft,mcp__cadcraft");
         let codex = codex_peer_args(&config, "gridcraft").join(" ");
-        assert!(
-            codex.contains("mcp_servers.cadcraft.command=\"C:/ArtCraft/cadcraft-cli.exe\"") && !codex.contains("mcp_servers.gridcraft"),
-            "{codex}"
-        );
+        assert!(codex.contains("mcp_servers.cadcraft.command=\"C:/ArtCraft/cadcraft-cli.exe\"") && !codex.contains("mcp_servers.gridcraft"), "{codex}");
         assert!(codex.contains(r#"mcp_servers.cadcraft.env={TOKEN="t\"1"}"#), "{codex}");
         store.leave();
         assert!(store.peers("gridcraft").is_empty());
@@ -549,8 +549,8 @@ mod tests {
         use super::super::{Assistant, Event, Launch, Running};
         let mut a = Assistant::default();
         a.memory = Some(store.clone());
-        let ctl = std::sync::Mutex::new(Some(std::sync::mpsc::channel().1));
-        a.starter = Some(Box::new(move |_, _| ctl.lock().ok().and_then(|mut r| r.take()).map(|rx| (4567, rx))));
+        // The channel counts as open (each app starts it its own way).
+        a.port = Some(4567);
         a.cli = Some(PathBuf::from("craft-cli"));
         let log = asked.clone();
         a.launcher = std::sync::Arc::new(move |l: Launch| {
