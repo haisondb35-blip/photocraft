@@ -8,6 +8,8 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+# The synced cloud folder every Craft app shares (crates/craft-sync): iCloud Drive and the others.
+craft-sync = { path = "../craft-sync" }
 chrono = { workspace = true }
 craft-print = { workspace = true }
 craft-ui = { workspace = true }
@@ -49,6 +51,9 @@ flate2 = { workspace = true }
 web-time = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# The assistant's own-key models (OpenAI-compatible, Gemini, Ollama): the same ureq, features and
+# TLS as craft-update, so nothing new is built.
+ureq = { version = "3.4", default-features = false, features = ["rustls-no-provider", "_ring", "gzip", "platform-verifier"] }
 # Floating panels open in their own OS windows on the desktop; the web keeps them in the page.
 craft-ui = { workspace = true, features = ["native-windows"] }
 craft-update = { workspace = true }

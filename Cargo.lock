@@ -1458,6 +1458,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "craft-sync"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "serde_json",
+]
+
+[[package]]
 name = "craft-ui"
 version = "0.1.0"
 source = "git+https://github.com/storytold/craft-libs?rev=c5a1cbfb5f9049f9270955caffb5bee5997aebf7#c5a1cbfb5f9049f9270955caffb5bee5997aebf7"
@@ -5595,6 +5603,7 @@ dependencies = [
  "base64 0.23.1",
  "chrono",
  "craft-print",
+ "craft-sync",
  "craft-ui",
  "craft-update",
  "eframe",
@@ -5632,6 +5641,7 @@ dependencies = [
  "tempfile",
  "toml",
  "unicode-bidi",
+ "ureq",
  "web-time",
  "winsafe",
 ]
