@@ -261,16 +261,9 @@ mod tests {
         ] {
             assert!(is_conflict_name("Budget.xlsx", name), "{name}");
         }
-        for name in [
-            "Budget.xlsx",
-            "Budget final.xlsx",
-            "Budget 2.docx",
-            "Budget-final.xlsx",
-            "Budget 1.xlsx",
-            "Budget 2024.xlsx",
-            "Other 2.xlsx",
-            "~$Budget 2.xlsx",
-        ] {
+        for name in
+            ["Budget.xlsx", "Budget final.xlsx", "Budget 2.docx", "Budget-final.xlsx", "Budget 1.xlsx", "Budget 2024.xlsx", "Other 2.xlsx", "~$Budget 2.xlsx"]
+        {
             assert!(!is_conflict_name("Budget.xlsx", name), "{name}");
         }
         assert!(is_conflict_name("Notes", "Notes 2"), "a name without an extension");
@@ -283,8 +276,7 @@ mod tests {
             std::fs::write(d.join(n), "x").unwrap();
         }
         std::fs::create_dir(d.join("Budget 3.xlsx")).unwrap();
-        let found: Vec<String> =
-            conflict_copies(&d.join("Budget.xlsx")).iter().map(|p| p.file_name().unwrap().to_string_lossy().into_owned()).collect();
+        let found: Vec<String> = conflict_copies(&d.join("Budget.xlsx")).iter().map(|p| p.file_name().unwrap().to_string_lossy().into_owned()).collect();
         assert_eq!(found, ["Budget (1).xlsx", "Budget 2.xlsx"]);
         assert!(conflict_copies(&d.join("missing").join("x.xlsx")).is_empty());
         assert!(!is_cloud_only(&d.join("Budget.xlsx")));

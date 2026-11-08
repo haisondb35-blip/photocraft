@@ -30,11 +30,7 @@ pub struct Config {
 impl std::fmt::Debug for Config {
     // Never the key: a Debug print can end up in a log.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Config")
-            .field("url", &self.url)
-            .field("model", &self.model)
-            .field("key", &if self.key.is_empty() { "" } else { "…" })
-            .finish()
+        f.debug_struct("Config").field("url", &self.url).field("model", &self.model).field("key", &if self.key.is_empty() { "" } else { "…" }).finish()
     }
 }
 
@@ -47,11 +43,9 @@ pub fn defaults(p: Provider) -> Config {
     match p {
         Provider::Ollama => Config { url: "http://localhost:11434/v1".into(), model: String::new(), key: String::new() },
         Provider::OpenAi => Config { url: "https://api.openai.com/v1".into(), model: "gpt-5-mini".into(), key: env("OPENAI_API_KEY") },
-        Provider::Gemini => Config {
-            url: "https://generativelanguage.googleapis.com/v1beta/openai".into(),
-            model: "gemini-2.5-flash".into(),
-            key: env("GEMINI_API_KEY"),
-        },
+        Provider::Gemini => {
+            Config { url: "https://generativelanguage.googleapis.com/v1beta/openai".into(), model: "gemini-2.5-flash".into(), key: env("GEMINI_API_KEY") }
+        }
         Provider::Claude | Provider::Codex => Config::default(),
     }
 }
@@ -78,8 +72,7 @@ pub fn load(dir: Option<&Path>, p: Provider) -> Config {
 /// Keeps `c` as `p`'s settings in `dir` (the AI folder).
 pub fn save(dir: &Path, p: Provider, c: &Config) -> Result<(), String> {
     let file = dir.join(FILE);
-    let mut v =
-        std::fs::read(&file).ok().and_then(|b| serde_json::from_slice::<Value>(&b).ok()).filter(Value::is_object).unwrap_or_else(|| json!({}));
+    let mut v = std::fs::read(&file).ok().and_then(|b| serde_json::from_slice::<Value>(&b).ok()).filter(Value::is_object).unwrap_or_else(|| json!({}));
     v[p.key()] = json!({"url": c.url.trim(), "model": c.model.trim(), "key": c.key.trim()});
     std::fs::create_dir_all(dir).map_err(|e| format!("{}: {e}", dir.display()))?;
     let tmp = file.with_extension("json.tmp");
@@ -96,8 +89,7 @@ pub fn chat_tools(mcp_tools: &Value) -> Vec<Value> {
                 .iter()
                 .filter_map(|t| {
                     let name = t.get("name").and_then(Value::as_str)?;
-                    let schema =
-                        t.get("inputSchema").filter(|s| s.is_object()).cloned().unwrap_or_else(|| json!({"type": "object", "properties": {}}));
+                    let schema = t.get("inputSchema").filter(|s| s.is_object()).cloned().unwrap_or_else(|| json!({"type": "object", "properties": {}}));
                     Some(json!({
                         "type": "function",
                         "function": {
@@ -154,10 +146,11 @@ pub struct Reply {
 
 /// Reads a chat API answer.
 pub fn parse_reply(v: &Value) -> Result<Reply, String> {
-    let message =
-        v.pointer("/choices/0/message").filter(|m| m.is_object()).cloned().ok_or_else(|| {
-            v.pointer("/error/message").and_then(Value::as_str).map_or_else(|| "the model sent no message".to_string(), str::to_string)
-        })?;
+    let message = v
+        .pointer("/choices/0/message")
+        .filter(|m| m.is_object())
+        .cloned()
+        .ok_or_else(|| v.pointer("/error/message").and_then(Value::as_str).map_or_else(|| "the model sent no message".to_string(), str::to_string))?;
     let text = message.get("content").and_then(Value::as_str).unwrap_or_default().trim().to_string();
     let calls = message
         .get("tool_calls")
@@ -194,11 +187,7 @@ pub fn error_text(status: u16, body: &str) -> String {
     let said = serde_json::from_str::<Value>(body)
         .ok()
         .and_then(|v| {
-            v.pointer("/error/message")
-                .or_else(|| v.pointer("/0/error/message"))
-                .or_else(|| v.get("error"))
-                .and_then(Value::as_str)
-                .map(str::to_string)
+            v.pointer("/error/message").or_else(|| v.pointer("/0/error/message")).or_else(|| v.get("error")).and_then(Value::as_str).map(str::to_string)
         })
         .unwrap_or_else(|| body.trim().chars().take(300).collect());
     match status {
