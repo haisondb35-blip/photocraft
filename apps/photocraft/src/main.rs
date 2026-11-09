@@ -628,6 +628,12 @@ fn main() -> eframe::Result {
             // Each file's conversation with the assistant is remembered, in the folder all the Craft
             // apps share (ArtCraft/AI).
             app.assistant.use_memory(photocraft_ui_egui::assistant::Store::shared());
+            // Save chat with file: a .pcraft file's conversation goes into it as it is written
+            // (`services::write_atomic`), and comes back when it is opened.
+            if app.assistant.memory.is_some() {
+                photocraft_ui_egui::assistant::embed::install(app.assistant.shelf.clone());
+                app.assistant.embedded_reader = Some(photocraft_ui_egui::assistant::embed::read);
+            }
             // Window > Claude: the pane opens a channel of its own when first asked, on a free port
             // with a token made for it, and hands both to the assistant it starts.
             app.assistant.starter = Some(Box::new(|ctx| {

@@ -393,7 +393,9 @@ fn recovery_dir() -> Option<PathBuf> {
 /// [`photocraft_format::atomic`]). Every document write (Save, Save As, Export, Save for Web) and
 /// the preferences go through here, so a failed or interrupted save never destroys the old file.
 fn write_atomic(path: &Path, bytes: &[u8]) -> Result<(), String> {
-    photocraft_format::atomic_write(path, bytes).map_err(|e| e.to_string())
+    // Save chat with file: a .pcraft file gets the assistant's conversation about it.
+    let hooked = photocraft_ui_egui::assistant::embed::hooked(&path.to_string_lossy(), bytes);
+    photocraft_format::atomic_write(path, hooked.as_deref().unwrap_or(bytes)).map_err(|e| e.to_string())
 }
 
 /// [`write_atomic`] for an encoded save, reporting the fraction written (a background save's
@@ -401,7 +403,11 @@ fn write_atomic(path: &Path, bytes: &[u8]) -> Result<(), String> {
 /// is never held in memory next to its model (#6607).
 fn write_encoded_atomic(path: &Path, encoded: &photocraft_io::Encoded, progress: &dyn Fn(f32)) -> Result<(), String> {
     match encoded {
-        photocraft_io::Encoded::Bytes(bytes) => photocraft_format::atomic_write_progress(path, bytes, progress),
+        photocraft_io::Encoded::Bytes(bytes) => {
+            // Save chat with file, as in `write_atomic`.
+            let hooked = photocraft_ui_egui::assistant::embed::hooked(&path.to_string_lossy(), bytes);
+            photocraft_format::atomic_write_progress(path, hooked.as_deref().unwrap_or(bytes), progress)
+        }
         photocraft_io::Encoded::Psd(_) => {
             // Only the progress bar's scale: a model whose length can't be worked out fails the
             // write the same way, through the atomic write's "not changed" error.
