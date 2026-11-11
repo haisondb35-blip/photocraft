@@ -38,6 +38,7 @@ impl PhotocraftApp {
         crate::updates_ui::skip_startup(self);
     }
 
+    /// Creates a new application state managing the engine session and UI services.
     pub fn new(mut session: Session, mut services: Services) -> Self {
         session.updates.check = services.check_updates.take();
         let mut app = Self {
@@ -149,6 +150,8 @@ impl PhotocraftApp {
             type_layout: None,
             type_clicks: None,
             type_transform_preview: None,
+            type_path_damage: None,
+            type_box_preview: None,
             type_font_preview: None,
             color_picker_preview: None,
             guide_drag: None,
