@@ -1377,6 +1377,7 @@ pub fn pane(app: &mut crate::PhotocraftApp, ui: &mut egui::Ui) {
         ui.ctx().request_repaint_after(std::time::Duration::from_millis(250));
     }
     ui.horizontal(|ui| {
+        use craft::ui::contract::Show as _;
         let mut chosen = a.provider;
         let entries: Vec<craft::ui::contract::Entry<String>> =
             Provider::ALL.iter().map(|p| craft::ui::contract::Entry::new(p.key().to_string(), p.label())).collect();
