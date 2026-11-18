@@ -1328,7 +1328,8 @@ fn api_settings(a: &mut Assistant, ui: &mut egui::Ui) {
 /// Window > Claude: the pane at the reading-end side of the window, beside the dock.
 pub fn side_pane(app: &mut crate::PhotocraftApp, ui: &mut egui::Ui) {
     let t = crate::theme::Tokens::get(ui.ctx());
-    crate::direction::end_panel("assistant_pane")
+    let panel = if crate::direction::is_rtl() { egui::Panel::left("assistant_pane") } else { egui::Panel::right("assistant_pane") };
+    panel
         .resizable(true)
         .default_size(340.0)
         .size_range(260.0..=560.0)
@@ -1377,11 +1378,12 @@ pub fn pane(app: &mut crate::PhotocraftApp, ui: &mut egui::Ui) {
     }
     ui.horizontal(|ui| {
         let mut chosen = a.provider;
-        craft_ui::ComboBox::from_id_salt("assistant_provider").selected_text(chosen.label()).show_ui(ui, |ui| {
-            for p in Provider::ALL {
-                ui.selectable_value(&mut chosen, p, p.label());
-            }
-        });
+        let entries: Vec<craft::ui::contract::Entry<String>> =
+            Provider::ALL.iter().map(|p| craft::ui::contract::Entry::new(p.key().to_string(), p.label())).collect();
+        let picked = craft::ui::pickers::Select::new("Assistant", craft::ui::contract::Bind::given(chosen.key().to_string()), &entries).show(ui);
+        if let Some(p) = picked.value().and_then(|key| Provider::from_key(key)) {
+            chosen = p;
+        }
         if chosen != a.provider {
             a.set_provider(chosen);
             if let Some(store) = &a.memory {
