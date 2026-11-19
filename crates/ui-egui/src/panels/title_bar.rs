@@ -9,7 +9,9 @@ use super::{PhotocraftApp, brand};
 
 // ----------------------------------------------------------------------------- title bar
 
-/// The app's top bar, in the shell's title slot: brand mark, menus, the document title and the workspace controls.
+/// The app's top bar, in the shell's title slot: brand mark, menus and the document title. Nothing else sits at its
+/// far end, as in the reference application: the workspace switcher, command search and appearance mode live in
+/// Window › Workspace, Edit › Search and Window › Appearance (#13577). Our one addition there is the AI Assistant button.
 /// The framework `TitleBar` follows the window's frame: with the app's own frame (Windows and Linux) it is also the
 /// window's title bar and the caption buttons take its ends; with the system's frame it shows the content and no title.
 pub fn title_bar(app: &mut PhotocraftApp, ui: &mut egui::Ui) {
@@ -32,19 +34,12 @@ pub fn title_bar(app: &mut PhotocraftApp, ui: &mut egui::Ui) {
         |ui, _| {
             let mut guard = app.borrow_mut();
             let app = &mut **guard;
-            crate::prefs_ui::appearance_button(app, ui);
-            let tip = crate::shortcuts::tip_label(app, "Search commands", "edit.search");
-            let search = IconButton::new(IconId::new("search")).label(tip.clone()).tooltip(TooltipSpec::new(tip)).selected(app.ui.palette.open).show(ui);
-            if search.clicked() {
-                app.ui.palette.open = !app.ui.palette.open;
-            }
             // Claude: the assistant pane (Window › Claude).
             let tip = "AI Assistant: Claude or ChatGPT (Window › Claude)";
             let claude = IconButton::new(IconId::new("wand_sparkles")).label(tip).tooltip(TooltipSpec::new(tip)).selected(app.assistant_open).show(ui);
             if claude.clicked() {
                 app.assistant_open = !app.assistant_open;
             }
-            crate::workspace_ui::switcher(app, ui);
         },
     );
     // The bar never closes the window: File › Exit asks about unsaved work first.
