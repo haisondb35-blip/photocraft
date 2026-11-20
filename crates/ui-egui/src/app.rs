@@ -10,6 +10,7 @@ mod clipboard;
 mod commands;
 #[cfg(not(target_arch = "wasm32"))]
 mod control;
+pub(crate) mod doc_queries;
 mod files;
 pub(crate) use files::ensure_memory_to_save;
 mod frame;
@@ -22,7 +23,6 @@ mod view;
 
 pub(crate) use targets::adjustment_layer_active;
 pub(crate) use thumbs::layer_thumb_frame;
-pub use thumbs::surface_fingerprint;
 
 impl PhotocraftApp {
     /// brian-local: skip the start-up update check (Help › Check for Updates still checks).
@@ -225,6 +225,7 @@ impl PhotocraftApp {
             tiff_remembered: Default::default(),
             brush_tip: None,
             snap_cache: Default::default(),
+            doc_queries: Default::default(),
             workspaces: Default::default(),
             // Off until `prefs_ui::load` sets the saved interval.
             autosave: craft::platform::autosave::Autosave::new(None),
@@ -237,6 +238,8 @@ impl PhotocraftApp {
             #[cfg(all(debug_assertions, not(target_arch = "wasm32")))]
             live_tokens: theme::live::LiveTokens::from_env(),
         };
+        #[cfg(all(test, not(target_arch = "wasm32")))]
+        photocraft_raster::spill::use_test_volume_space();
         // Saved preferences are in place before the first frame; recovery starts in upkeep.
         prefs_ui::load(&mut app);
         // The workspace set reads the loaded preferences (and moves the earlier saves into it).
@@ -340,3 +343,6 @@ impl eframe::App for Box<PhotocraftApp> {
 
 #[cfg(test)]
 mod clipboard_tests;
+
+#[cfg(test)]
+mod apply_data_set_alert_tests;
