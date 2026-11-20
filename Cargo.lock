@@ -6388,7 +6388,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "arboard",
  "async-io",
@@ -6443,7 +6443,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-algo"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "craft",
  "craft-metadata 0.1.0 (git+https://github.com/storytold/craft-libs?rev=bafb4522899d9f814a07dad636cdefcbf705dead)",
@@ -6460,7 +6460,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-automation"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "base64 0.23.1",
  "cap-std",
@@ -6492,7 +6492,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-cli"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "clap",
  "clap_complete",
@@ -6519,7 +6519,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-color"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "craft-cms",
  "serde",
@@ -6527,7 +6527,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-compose"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "craft-cms",
  "criterion",
@@ -6543,7 +6543,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-doc"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "photocraft-color",
  "photocraft-geom",
@@ -6554,7 +6554,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-engine"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "base64 0.22.1",
  "blake3",
@@ -6601,7 +6601,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-format"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "blake3",
  "craft-image-codecs 0.1.0 (git+https://github.com/storytold/craft-libs?rev=bafb4522899d9f814a07dad636cdefcbf705dead)",
@@ -6627,14 +6627,14 @@ dependencies = [
 
 [[package]]
 name = "photocraft-geom"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "photocraft-gpu"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "bytemuck",
  "craft-cms",
@@ -6655,7 +6655,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-io"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "blake3",
  "craft",
@@ -6702,14 +6702,14 @@ dependencies = [
 
 [[package]]
 name = "photocraft-ipp"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "craft-ipp",
 ]
 
 [[package]]
 name = "photocraft-oil-round-proof"
-version = "0.23.1"
+version = "0.23.5"
 dependencies = [
  "photocraft-algo",
  "rayon",
@@ -6717,14 +6717,14 @@ dependencies = [
 
 [[package]]
 name = "photocraft-ops"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "photocraft-doc",
 ]
 
 [[package]]
 name = "photocraft-paint"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "base64 0.23.1",
  "craft-cms",
@@ -6739,7 +6739,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-plugins"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "photocraft-color",
  "photocraft-geom",
@@ -6755,7 +6755,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-raster"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "crc32fast",
  "lz4_flex",
@@ -6771,7 +6771,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-raw"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "craft-image-codecs 0.1.0 (git+https://github.com/storytold/craft-libs?rev=bafb4522899d9f814a07dad636cdefcbf705dead)",
  "craft-raw",
@@ -6785,7 +6785,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-tablet"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "block2 0.6.2",
  "log",
@@ -6801,7 +6801,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-testkit"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "memory-stats",
  "serde_json",
@@ -6810,7 +6810,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-text"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "base64 0.23.1",
  "craft",
@@ -6828,7 +6828,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-ui-egui"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "base64 0.23.1",
  "chrono",
@@ -6873,7 +6873,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-vector"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "photocraft-color",
  "photocraft-doc",
@@ -6884,7 +6884,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-web"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "craft-image-codecs 0.1.0 (git+https://github.com/storytold/craft-libs?rev=bafb4522899d9f814a07dad636cdefcbf705dead)",
  "craft-psd",
@@ -6907,7 +6907,7 @@ dependencies = [
 
 [[package]]
 name = "photocraft-web-boot"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "flate2",
  "js-sys",
@@ -10884,7 +10884,7 @@ checksum = "ec7a2a501ed189703dba8b08142f057e887dfc4b2cc4db2d343ac6376ba3e0b9"
 
 [[package]]
 name = "xtask"
-version = "0.23.4"
+version = "0.23.5"
 dependencies = [
  "chrono",
  "craft",
