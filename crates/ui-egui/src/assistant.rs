@@ -24,7 +24,11 @@ pub mod embed;
 mod memory;
 pub use memory::{Memory, Store};
 
+#[cfg(not(target_arch = "wasm32"))]
 use crate::control::ControlRequest;
+/// The web build has no control server (`crate::control` is desktop-only): nothing arrives.
+#[cfg(target_arch = "wasm32")]
+pub enum ControlRequest {}
 
 /// Starts a control channel for the pane: given the token requests must carry, the port it
 /// listens on (127.0.0.1) and the requests it receives. The desktop app provides it.
